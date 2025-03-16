@@ -1,5 +1,6 @@
 package busan.dining.login;
 
+import busan.dining.jwt.jwtTokenUtil;
 import busan.dining.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,8 @@ public class LoginController {
         }
 
         if(authService.login(loginDTO)== HttpStatus.OK) {
+            String jwt = jwtTokenUtil.createToken(loginDTO.getUserID(), "valuablekeyisthatiwantedtogarrentthatisntit123456789");
+            model.addAttribute("jwt", jwt);
             return "redirect:/home";
         }
         else

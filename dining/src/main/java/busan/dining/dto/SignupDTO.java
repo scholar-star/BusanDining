@@ -2,9 +2,6 @@ package busan.dining.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +14,6 @@ public class SignupDTO {
     @NotBlank(message="사용자 password는 필수로 입력해야 합니다.")
     private String password;
 
-    @NotBlank
     private String name;
 
     @NotBlank(message="이메일은 필수로 입력해야 합니다.")
