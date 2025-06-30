@@ -1,4 +1,5 @@
 package dining.gourmet.jwt;
+import dining.gourmet.security.SecurityConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import javax.crypto.SecretKey;
@@ -19,7 +20,19 @@ public class JwtTokenUtil {
     }
 
     public boolean validateToken(String token, String username) {
+        try {
+            Claims claims = extractAllClaims(token);
 
+            String tokenUsername = claims.getSubject();
+            if(!tokenUsername.equals(username)) {
+                return false;
+            }
+
+            Date expiration = claims.getExpiration();
+            return !expiration.before(new Date());
+        } catch(Exception e) {
+            return false;
+        }
     }
 
     private Claims extractAllClaims(String token) {
