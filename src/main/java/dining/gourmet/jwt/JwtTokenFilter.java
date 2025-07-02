@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
@@ -33,7 +35,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
             if(jwtTokenUtil.validateToken(token, userDetails.getUsername())) {
-
+                UsernamePasswordAuthenticationToken authenticationToken
+                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // 토큰 검증, credential은 null로 놔둔다.
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                // 요청의 부가정보(Client IP 등) - req을 WebAuthenticationDetailsSource에 넣어 AuthenticationToken의 detail로 삼는다.
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                // Spring Security의 Context에 Authentication token을 넣는다.
             }
         }
         filterChain.doFilter(req, resp);
