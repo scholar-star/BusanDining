@@ -20,11 +20,10 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public ResultDTO insertUser(UserDTO userDTO) {
-        ResultDTO resultDTO = null;
         try {
             String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
-            String sql = "insert into users(nickname, login_id, password) values (?, ?, ?)";
-            jdbcTemplate.update(sql, userDTO.getNickname(), userDTO.getId(), encryptedPassword);
+            String sql = "insert into users(username, login_id, password) values (?, ?, ?)";
+            jdbcTemplate.update(sql, userDTO.getUsername(), userDTO.getId(), encryptedPassword);
             return new ResultDTO(true, "Inserted user successfully");
         }
         catch (Exception e) {
@@ -34,10 +33,10 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String sql = "select nickname, login_id, password from users where username = ?";
+        String sql = "select username, login_id, password from users where username = ?";
         UserDetails user = jdbcTemplate.queryForObject(sql, new Object[]{username},
                 (rs, rowNum) -> {
-                    String nickname = rs.getString("nickname");
+                    String nickname = rs.getString("username");
                     String loginId = rs.getString("login_id");
                     String password = rs.getString("password");
                     return new User(new UserDTO(loginId, password, nickname, UserType.USER));

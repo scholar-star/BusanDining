@@ -29,7 +29,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return user.getUsername();
     }
 
     @Override
