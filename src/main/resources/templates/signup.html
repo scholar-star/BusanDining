@@ -1,82 +1,334 @@
-<!-- templates/register.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background: url('/img/eulsukdo.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-        .register-container {
-            background: rgba(255, 255, 255, 0.85);
-            width: 400px;
-            margin: 100px auto;
-            padding: 40px 30px;
+
+        .signup-container {
+            background-color: white;
+            padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .register-container h2 {
-            margin-bottom: 30px;
+
+        h1 {
+            text-align: center;
             color: #333;
+            margin-bottom: 30px;
         }
-        .register-container input[type="text"],
-        .register-container input[type="password"] {
-            width: 100%;
-            padding: 12px 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+
+        .form-group {
+            margin-bottom: 20px;
         }
-        .register-container select {
-            width: 100%;
-            padding: 12px 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            background: white;
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
         }
-        .register-container button {
+
+        .required {
+            color: red;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], select {
             width: 100%;
             padding: 12px;
-            background: #4a90e2;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .address-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .address-group > div {
+            flex: 1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background 0.2s;
+            margin-top: 20px;
         }
-        .register-container button:hover {
-            background: #357abd;
+
+        .btn-submit:hover {
+            background-color: #45a049;
         }
+
         .error-message {
-            color: #e74c3c;
-            margin-bottom: 10px;
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-<div class="register-container">
-    <h2>회원가입</h2>
-    <form th:action="@{/busan/auth}" method="post" th:object="${userDTO}">
-        <div th:if="${#fields.hasErrors('*')}" class="error-message">
-            <p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
+<div class="signup-container">
+    <h1>회원가입</h1>
+
+    <form th:action="@{/busan/auth}" th:object="${userDTO}" method="post">
+        <!-- 아이디 (필수) -->
+        <div class="form-group">
+            <label for="username">아이디 <span class="required">*</span></label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   th:field="*{id}"
+                   th:class="${#fields.hasErrors('id')} ? 'error' : ''"
+                   placeholder="아이디를 입력하세요"
+                   required>
+            <div th:if="${#fields.hasErrors('id')}"
+                 th:errors="*{id}"
+                 class="error-message">
+            </div>
         </div>
-        <input type="text" name="id" th:field="*{id}" placeholder="아이디" required />
-        <input type="password" name="password" th:field="*{password}" placeholder="비밀번호" required />
-        <input type="text" name="username" th:field="*{username}" placeholder="닉네임" required />
-        <button type="submit">회원가입</button>
+
+        <!-- 비밀번호 (필수) -->
+        <div class="form-group">
+            <label for="password">비밀번호 <span class="required">*</span></label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   th:field="*{password}"
+                   th:class="${#fields.hasErrors('password')} ? 'error' : ''"
+                   placeholder="비밀번호를 입력하세요"
+                   required>
+            <div th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 비밀번호 확인 (필수) -->
+        <div class="form-group">
+            <label for="passwordConfirm">비밀번호 확인 <span class="required">*</span></label>
+            <input type="password"
+                   id="passwordConfirm"
+                   name="passwordConfirm"
+                   th:field="*{passwordConfirm}"
+                   th:class="${#fields.hasErrors('passwordConfirm')} ? 'error' : ''"
+                   placeholder="비밀번호를 다시 입력하세요"
+                   required>
+            <div th:if="${#fields.hasErrors('passwordConfirm')}"
+                 th:errors="*{passwordConfirm}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 닉네임 (필수) -->
+        <div class="form-group">
+            <label for="nickname">닉네임 <span class="required">*</span></label>
+            <input type="text"
+                   id="nickname"
+                   name="nickname"
+                   th:field="*{nickname}"
+                   th:class="${#fields.hasErrors('nickname')} ? 'error' : ''"
+                   placeholder="닉네임을 입력하세요"
+                   required>
+            <div th:if="${#fields.hasErrors('nickname')}"
+                 th:errors="*{nickname}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 이메일 (선택) -->
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email"
+                   id="email"
+                   name="email"
+                   th:field="*{email}"
+                   th:class="${#fields.hasErrors('email')} ? 'error' : ''"
+                   placeholder="이메일을 입력하세요 (선택사항)">
+            <div th:if="${#fields.hasErrors('email')}"
+                 th:errors="*{email}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 주소 선택 (선택) -->
+        <div class="form-group">
+            <label>주소</label>
+            <div class="address-group">
+                <!-- 시/도 -->
+                <div>
+                    <select id="province"
+                            name="province"
+                            th:field="*{province}"
+                            onchange="updateCity()">
+                        <option value="">시/도 선택</option>
+                        <option value="서울특별시">서울특별시</option>
+                        <option value="부산광역시">부산광역시</option>
+                        <option value="대구광역시">대구광역시</option>
+                        <option value="인천광역시">인천광역시</option>
+                        <option value="광주광역시">광주광역시</option>
+                        <option value="대전광역시">대전광역시</option>
+                        <option value="울산광역시">울산광역시</option>
+                        <option value="세종특별자치시">세종특별자치시</option>
+                        <option value="경기도">경기도</option>
+                        <option value="강원도">강원도</option>
+                        <option value="충청북도">충청북도</option>
+                        <option value="충청남도">충청남도</option>
+                        <option value="전라북도">전라북도</option>
+                        <option value="전라남도">전라남도</option>
+                        <option value="경상북도">경상북도</option>
+                        <option value="경상남도">경상남도</option>
+                        <option value="제주특별자치도">제주특별자치도</option>
+                    </select>
+                </div>
+
+                <!-- 시/군/구 -->
+                <div>
+                    <select id="city"
+                            name="city"
+                            th:field="*{city}"
+                            onchange="updateDistrict()">
+                        <option value="">시/군/구 선택</option>
+                    </select>
+                </div>
+
+                <!-- 읍/면/동 -->
+                <div>
+                    <select id="district"
+                            name="district"
+                            th:field="*{district}">
+                        <option value="">읍/면/동 선택</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전체 에러 메시지 -->
+        <div th:if="${#fields.hasGlobalErrors()}"
+             th:each="error : ${#fields.globalErrors()}"
+             class="error-message">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- 회원가입 버튼 -->
+        <button type="submit" class="btn-submit">회원가입</button>
     </form>
+
+
 </div>
+
+<script>
+    // 주소 데이터
+    const addressData = {
+        "서울특별시": {
+            "강남구": ["개포동", "논현동", "대치동", "도곡동", "삼성동", "압구정동", "청담동"],
+            "강북구": ["미아동", "번동", "수유동", "우이동"],
+            "종로구": ["견지동", "경운동", "계동", "공평동", "관훈동", "관철동"],
+            "중구": ["남산동", "다동", "동화동", "명동", "무교동", "봉래동"]
+        },
+        "부산광역시": {
+            "해운대구": ["반여동", "반송동", "송정동", "우동", "재송동", "좌동", "중동"],
+            "부산진구": ["가야동", "개금동", "당감동", "범천동", "부암동", "연지동", "전포동"],
+            "동래구": ["명륜동", "복천동", "사직동", "안락동", "온천동", "칠산동"],
+            "수영구": ["광안동", "남천동", "망미동", "민락동", "수영동"]
+        },
+        "경기도": {
+            "성남시 분당구": ["정자동", "수내동", "구미동", "서현동", "이매동", "야탑동", "금곡동"],
+            "성남시 수정구": ["태평동", "수진동", "단대동", "복정동", "신흥동", "중앙동"],
+            "수원시 영통구": ["영통동", "원천동", "하동", "광교동", "매탄동", "이의동"],
+            "수원시 장안구": ["정자동", "천천동", "영화동", "조원동", "연무동", "파장동"],
+            "용인시 기흥구": ["기흥동", "구갈동", "보정동", "상갈동", "신갈동", "영덕동"],
+            "고양시 일산동구": ["백석동", "마두동", "장항동", "정발산동", "중산동", "식사동"]
+        },
+        "인천광역시": {
+            "남동구": ["간석동", "고잔동", "논현동", "만수동", "서창동", "수산동", "운연동"],
+            "부평구": ["갈산동", "부평동", "산곡동", "십정동", "청천동"],
+            "연수구": ["동춘동", "송도동", "연수동", "청학동"],
+            "중구": ["경동", "관동", "답동", "도원동", "무의동", "북성동", "선린동"]
+        },
+        "대구광역시": {
+            "수성구": ["범어동", "상동", "신매동", "연호동", "지산동", "파동", "황금동"],
+            "달서구": ["갈산동", "대곡동", "도원동", "본동", "상인동", "성서동", "월성동"],
+            "중구": ["남산동", "대봉동", "대신동", "동인동", "삼덕동", "성내동", "수동"]
+        }
+    };
+
+    function updateCity() {
+        const province = document.getElementById('province').value;
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+
+        console.log('Selected province:', province);
+
+        // 시/군/구 초기화
+        citySelect.innerHTML = '<option value="">시/군/구 선택</option>';
+        districtSelect.innerHTML = '<option value="">읍/면/동 선택</option>';
+
+        if (province && addressData[province]) {
+            console.log('Cities for', province, ':', Object.keys(addressData[province]));
+            Object.keys(addressData[province]).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+    }
+
+    function updateDistrict() {
+        const province = document.getElementById('province').value;
+        const city = document.getElementById('city').value;
+        const districtSelect = document.getElementById('district');
+
+        console.log('Selected province:', province, 'city:', city);
+
+        // 읍/면/동 초기화
+        districtSelect.innerHTML = '<option value="">읍/면/동 선택</option>';
+
+        if (province && city && addressData[province] && addressData[province][city]) {
+            console.log('Districts for', city, ':', addressData[province][city]);
+            addressData[province][city].forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+    }
+</script>
 </body>
 </html>
