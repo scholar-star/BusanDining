@@ -1,5 +1,6 @@
 package dining.gourmet.auth.Contoller;
 
+import dining.gourmet.auth.DTO.LoginDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.DTO.UserDTO;
 import dining.gourmet.auth.service.UserService;
@@ -22,14 +23,14 @@ public class AuthController {
 
     @GetMapping("/busan/login")
     public String login(Model model) {
-        model.addAttribute("userDTO", new UserDTO());
+        model.addAttribute("loginDTO", new LoginDTO());
         return "login";
     }
 
     @PostMapping("/busan/signin")
-    public String signin(@ModelAttribute UserDTO userDTO) {
-        if(userService.loadUserByUsername(userDTO.getId())!=null) {
-            return "redirect:/";
+    public String signin(@ModelAttribute LoginDTO loginDTO) {
+        if(userService.loadUserByUsername(loginDTO.getLoginId())!=null) {
+            return "redirect:/busan/dining";
         } else {
             return "login";
         }
@@ -40,7 +41,7 @@ public class AuthController {
         ResultDTO result = userService.insertUser(userDTO);
         log.info(result.toString());
         if(result.isSuccess())
-            return "redirect:/busan/dining";
+            return "redirect:/busan/login";
         else {
             return "signup";
         }

@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
         try {
             String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
             String sql = "insert into users(username, login_id, password) values (?, ?, ?)";
-            jdbcTemplate.update(sql, userDTO.getUsername(), userDTO.getId(), encryptedPassword);
+            jdbcTemplate.update(sql, userDTO.getNickname(), userDTO.getId(), encryptedPassword);
             return new ResultDTO(true, "Inserted user successfully");
         }
         catch (Exception e) {
@@ -33,18 +33,23 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String sql = "select username, login_id, password from users where username = ?";
-        UserDetails user = jdbcTemplate.queryForObject(sql, new Object[]{username},
-                (rs, rowNum) -> {
-                    String nickname = rs.getString("username");
-                    String loginId = rs.getString("login_id");
-                    String password = rs.getString("password");
-                    return new User(new UserDTO(loginId, password, nickname, UserType.USER));
-                });
-                // 중간 옵션은 바인딩(?)에 들어갈 변수
-        if(user == null) {
-            throw new UsernameNotFoundException("User not found: "+username);
+        String sql = "select * from users where login_id = ?";
+        try {
+            UserDetails user = jdbcTemplate.queryForObject(sql,
+                    (rs, rowNum) -> {
+                        String nickname = rs.getString("username");
+                        String loginId = rs.getString("login_id");
+                        String password = rs.getString("password");
+                        String email = rs.getString("email");
+                        String province = rs.getString("province");
+                        String city = rs.getString("city");
+                        String district = rs.getString("district");
+                        return new User(new UserDTO(loginId, password, nickname, email, province, city, district, UserType.USER));
+                    }, username);
+            return user;
+            // 중간 옵션은 바인딩에 들어갈 변수
+        } catch(Exception e) {
+            return null;
         }
-        return user;
     }
 }

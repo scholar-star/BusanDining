@@ -1,73 +1,196 @@
-<!-- templates/login.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            /* 배경 이미지 경로를 아래에서 변경하세요 */
-            background: url('/img/gwanan.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
+
         .login-container {
-            background: rgba(255, 255, 255, 0.85);
-            width: 350px;
-            margin: 100px auto;
-            padding: 40px 30px;
+            background-color: white;
+            padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .login-container h2 {
-            margin-bottom: 30px;
+
+        h1 {
+            text-align: center;
             color: #333;
+            margin-bottom: 30px;
         }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 12px 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+
+        .form-group {
+            margin-bottom: 20px;
         }
-        .login-container button {
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .required {
+            color: red;
+        }
+
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
-            background: #4a90e2;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #0451d6;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #0451d6;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background 0.2s;
+            margin-top: 20px;
         }
-        .login-container button:hover {
-            background: #357abd;
+
+        .btn-submit:hover {
+            background-color: #0451d6;
         }
+
         .error-message {
-            color: #e74c3c;
-            margin-bottom: 10px;
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .signup-link a {
+            color: #0451d6;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .checkbox-group {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 <div class="login-container">
-    <h2>로그인</h2>
-    <form th:action="@{/busan/login}" method="post" th:object="${userDTO}">
+    <h1>로그인</h1>
+
+    <form th:action="@{/busan/signin}" th:object="${loginDTO}" method="post">
+        <!-- 아이디 (필수) -->
+        <div class="form-group">
+            <label for="username">아이디 <span class="required">*</span></label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   placeholder="아이디를 입력하세요"
+                   th:field="*{loginId}"
+                   th:class="${#fields.hasErrors('loginId')} ? 'error' : ''"
+                   required>
+            <div th:if="${#fields.hasErrors('loginId')}"
+                 th:errors="*{loginId}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 비밀번호 (필수) -->
+        <div class="form-group">
+            <label for="password">비밀번호 <span class="required">*</span></label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   placeholder="비밀번호를 입력하세요"
+                   th:field="*{password}"
+                   th:class="${#fields.hasErrors('password')} ? 'error' : ''"
+                   required>
+            <div th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}"
+                 class="error-message">
+            </div>
+        </div>
+
+        <!-- 로그인 상태 유지 -->
+        <div class="checkbox-group">
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            <label for="rememberMe">로그인 상태 유지</label>
+        </div>
+
+        <!-- 에러 메시지 -->
         <div th:if="${param.error}" class="error-message">
             아이디 또는 비밀번호가 올바르지 않습니다.
         </div>
-        <input type="text" name="id" th:field="*{id}" placeholder="아이디" required autofocus />
-        <input type="password" name="password" th:field="*{password}" placeholder="비밀번호" required />
-        <button type="submit">로그인</button>
+
+        <div th:if="${param.logout}" class="error-message" style="color: #0451d6;">
+            로그아웃 되었습니다.
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button type="submit" class="btn-submit">로그인</button>
     </form>
+
+    <!-- 비밀번호 찾기 -->
+    <div class="forgot-password">
+        <a href="/busan/forgot-password">비밀번호를 잊으셨나요?</a>
+    </div>
+
+    <!-- 회원가입 링크 -->
+    <div class="signup-link">
+        <p>계정이 없으신가요? <a href="/busan/signup">회원가입</a></p>
+    </div>
 </div>
 </body>
 </html>
