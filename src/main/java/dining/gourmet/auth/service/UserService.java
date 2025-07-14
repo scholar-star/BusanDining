@@ -1,16 +1,23 @@
 package dining.gourmet.auth.service;
 
+import dining.gourmet.auth.DTO.JWTDto;
+import dining.gourmet.auth.DTO.LoginDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.DTO.UserDTO;
 import dining.gourmet.auth.UserType;
 import dining.gourmet.auth.details.User;
+import dining.gourmet.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.xml.transform.Result;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +25,10 @@ public class UserService implements UserDetailsService {
 
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtil jwtTokenUtil;
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     public ResultDTO insertUser(UserDTO userDTO) {
         try {
@@ -51,5 +62,32 @@ public class UserService implements UserDetailsService {
         } catch(Exception e) {
             return null;
         }
+    }
+
+    public JWTDto login(LoginDTO login) {
+        String loginId = login.getLoginId();
+        String password = login.getPassword();
+
+        UserDetails user = loadUserByUsername(loginId);
+        if (user == null) {
+            throw new UsernameNotFoundException(loginId);
+        }
+
+        if(!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Not Matched");
+        }
+
+        JWTDto jwt = new JWTDto();
+        jwt.setToken(jwtTokenUtil.createToken(loginId, 30));
+        return jwt;
+    }
+
+    public ResultDTO Validate(String token, String loginId) {
+        ResultDTO result = null;
+        if(jwtTokenUtil.validateToken(token, loginId))
+            result = new ResultDTO(true, "Successfully logged in");
+        else
+            result = new ResultDTO(false, "Invalid token");
+        return result;
     }
 }

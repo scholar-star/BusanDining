@@ -1,21 +1,41 @@
 package dining.gourmet.jwt;
 import dining.gourmet.security.SecurityConfig;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
+@Component
 public class JwtTokenUtil {
-    String SECRET_KEY = "hello";
-    public static String createToken(String loginId, String key, long exp) {
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    private static String staticSecretKey;
+
+    @PostConstruct
+    public void init() {
+        staticSecretKey = secretKey;
+    }
+
+    public static String createToken(String loginId, long exp) {
         Claims claims = Jwts.claims();
         claims.put("loginId", loginId);
+        Key key = Keys.hmacShaKeyFor(staticSecretKey.getBytes());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis())) // 발행
-                .setExpiration(new Date(System.currentTimeMillis())) // 만료
+                .setExpiration(new Date(System.currentTimeMillis()+(exp*1000*60))) // 만료
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -37,7 +57,7 @@ public class JwtTokenUtil {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
     }

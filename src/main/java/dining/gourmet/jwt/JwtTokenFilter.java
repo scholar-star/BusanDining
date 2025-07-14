@@ -17,7 +17,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserService userService;
-    private final String secretKey;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
