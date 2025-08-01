@@ -5,124 +5,305 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            background-color: #f5f5f5;
         }
 
         .login-container {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
             color: #555;
+            font-size: 14px;
         }
 
         .required {
-            color: red;
+            color: #e74c3c;
+        }
+
+        .input-wrapper {
+            position: relative;
         }
 
         input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            box-sizing: border-box;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         input[type="text"]:focus, input[type="password"]:focus {
             outline: none;
-            border-color: #0451d6;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        input.error {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
         }
 
         .btn-submit {
             width: 100%;
-            padding: 12px;
-            background-color: #0451d6;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             margin-top: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-submit:hover {
-            background-color: #0451d6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
         }
 
         .error-message {
-            color: red;
+            color: #e74c3c;
             font-size: 12px;
-            margin-top: 5px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .signup-link {
-            text-align: center;
-            margin-top: 20px;
+        .error-message::before {
+            content: '⚠';
+            font-size: 14px;
         }
 
-        .signup-link a {
-            color: #0451d6;
-            text-decoration: none;
+        .success-message {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .signup-link a:hover {
-            text-decoration: underline;
+        .success-message::before {
+            content: '✓';
+            font-size: 14px;
         }
 
         .checkbox-group {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .checkbox-group input[type="checkbox"] {
-            width: auto;
+            width: 18px;
+            height: 18px;
             margin: 0;
+            accent-color: #667eea;
         }
 
         .checkbox-group label {
             margin: 0;
-            font-weight: normal;
+            font-weight: 400;
             color: #666;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .forgot-password {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .forgot-password a {
             color: #666;
             text-decoration: none;
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         .forgot-password a:hover {
-            text-decoration: underline;
+            color: #667eea;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .signup-link p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #764ba2;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+        }
+
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input[type="text"], input[type="password"] {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+
+            .btn-submit {
+                padding: 12px;
+                font-size: 15px;
+            }
+        }
+
+        /* 로딩 애니메이션 */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
@@ -130,17 +311,19 @@
 <div class="login-container">
     <h1>로그인</h1>
 
-    <form th:action="@{/busan/signin}" th:object="${loginDTO}" method="post">
+    <form th:action="@{/busan/signin}" th:object="${loginDTO}" method="post" id="loginForm">
         <!-- 아이디 (필수) -->
         <div class="form-group">
             <label for="username">아이디 <span class="required">*</span></label>
-            <input type="text"
-                   id="username"
-                   name="username"
-                   placeholder="아이디를 입력하세요"
-                   th:field="*{loginId}"
-                   th:class="${#fields.hasErrors('loginId')} ? 'error' : ''"
-                   required>
+            <div class="input-wrapper">
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="아이디를 입력하세요"
+                       th:field="*{loginId}"
+                       th:class="${#fields.hasErrors('loginId')} ? 'error' : ''"
+                       required>
+            </div>
             <div th:if="${#fields.hasErrors('loginId')}"
                  th:errors="*{loginId}"
                  class="error-message">
@@ -150,13 +333,15 @@
         <!-- 비밀번호 (필수) -->
         <div class="form-group">
             <label for="password">비밀번호 <span class="required">*</span></label>
-            <input type="password"
-                   id="password"
-                   name="password"
-                   placeholder="비밀번호를 입력하세요"
-                   th:field="*{password}"
-                   th:class="${#fields.hasErrors('password')} ? 'error' : ''"
-                   required>
+            <div class="input-wrapper">
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="비밀번호를 입력하세요"
+                       th:field="*{password}"
+                       th:class="${#fields.hasErrors('password')} ? 'error' : ''"
+                       required>
+            </div>
             <div th:if="${#fields.hasErrors('password')}"
                  th:errors="*{password}"
                  class="error-message">
@@ -170,16 +355,18 @@
         </div>
 
         <!-- 에러 메시지 -->
-        <div th:if="${param.error}" class="error-message">
+        <div th:if="${param.error}" class="alert alert-error">
+            <span>⚠</span>
             아이디 또는 비밀번호가 올바르지 않습니다.
         </div>
 
-        <div th:if="${param.logout}" class="error-message" style="color: #0451d6;">
+        <div th:if="${param.logout}" class="alert alert-success">
+            <span>✓</span>
             로그아웃 되었습니다.
         </div>
 
         <!-- 로그인 버튼 -->
-        <button type="submit" class="btn-submit">로그인</button>
+        <button type="submit" class="btn-submit" id="submitBtn">로그인</button>
     </form>
 
     <!-- 비밀번호 찾기 -->
@@ -192,5 +379,118 @@
         <p>계정이 없으신가요? <a href="/busan/signup">회원가입</a></p>
     </div>
 </div>
+
+<script>
+    // 폼 제출 시 AJAX 로그인 처리
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // 기본 폼 제출 방지
+
+        const submitBtn = document.getElementById('submitBtn');
+        const formData = new FormData(this);
+
+        // 로딩 상태 표시
+        submitBtn.classList.add('loading');
+        submitBtn.textContent = '로그인 중...';
+
+        // AJAX 요청으로 로그인 처리
+        fetch('/busan/signin', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 로그인 성공 시
+                    // localStorage에 토큰 저장
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('loginTime', new Date().toISOString());
+
+                    // 성공 메시지 표시
+                    showMessage('로그인 성공!', 'success');
+
+                    // 1초 후 홈으로 이동
+                    setTimeout(() => {
+                        window.location.href = '/busan/dining';
+                    }, 1000);
+                } else {
+                    // 로그인 실패 시
+                    showMessage(data.message || '로그인에 실패했습니다.', 'error');
+                    resetButton();
+                }
+            })
+            .catch(error => {
+                console.error('로그인 오류:', error);
+                showMessage('서버 오류가 발생했습니다.', 'error');
+                resetButton();
+            });
+    });
+
+    // 버튼 상태 초기화
+    function resetButton() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = '로그인';
+    }
+
+    // 메시지 표시 함수
+    function showMessage(message, type) {
+        // 기존 메시지 제거
+        const existingAlerts = document.querySelectorAll('.alert');
+        existingAlerts.forEach(alert => alert.remove());
+
+        // 새 메시지 생성
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = `
+            <span>${type === 'success' ? '✓' : '⚠'}</span>
+            ${message}
+        `;
+
+        // 폼 앞에 삽입
+        const form = document.getElementById('loginForm');
+        form.parentNode.insertBefore(alertDiv, form);
+
+        // 5초 후 자동 제거
+        setTimeout(() => {
+            alertDiv.style.transition = 'opacity 0.5s ease';
+            alertDiv.style.opacity = '0';
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 500);
+        }, 5000);
+    }
+
+    // 입력 필드 포커스 효과
+    document.querySelectorAll('input[type="text"], input[type="password"]').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+
+    // 페이지 로드 시 기존 토큰 확인
+    window.addEventListener('load', function() {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // 토큰이 있다면 홈으로 리다이렉트
+            window.location.href = '/busan/home';
+        }
+    });
+
+    // 에러 메시지 자동 숨김 (기존 Thymeleaf 에러 메시지용)
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 500);
+        });
+    }, 5000);
+</script>
 </body>
 </html>
