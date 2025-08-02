@@ -1,11 +1,10 @@
 package dining.gourmet.auth.Contoller;
 
-import dining.gourmet.auth.DTO.JWTDto;
+import dining.gourmet.auth.DTO.JwtDTO;
 import dining.gourmet.auth.DTO.LoginDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.DTO.UserDTO;
 import dining.gourmet.auth.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,14 +29,9 @@ public class AuthController {
     }
 
     @PostMapping("/busan/signin")
-    public String signin(@ModelAttribute LoginDTO loginDTO, HttpServletRequest request, Model model) {
-        if(userService.login(loginDTO)!=null) {
-            JWTDto jwtDto = userService.login(loginDTO);
-            model.addAttribute("token", jwtDto.getToken());
-            return "redirect:/busan/dining";
-        } else {
-            return "login";
-        }
+    @ResponseBody
+    public JwtDTO signin(@ModelAttribute LoginDTO loginDTO) {
+        return userService.login(loginDTO);
     }
 
     @PostMapping("/busan/auth")
