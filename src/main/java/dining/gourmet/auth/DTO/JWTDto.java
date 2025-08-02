@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtDTO {
-    private boolean success;
+public class JWTDto {
     private String token;
 }

@@ -1,6 +1,6 @@
 package dining.gourmet.auth.service;
 
-import dining.gourmet.auth.DTO.JwtDTO;
+import dining.gourmet.auth.DTO.JWTDto;
 import dining.gourmet.auth.DTO.LoginDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.DTO.UserDTO;
@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.xml.transform.Result;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +64,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public JwtDTO login(LoginDTO login) {
+    public JWTDto login(LoginDTO login) {
         String loginId = login.getLoginId();
         String password = login.getPassword();
 
@@ -75,9 +77,8 @@ public class UserService implements UserDetailsService {
             throw new BadCredentialsException("Not Matched");
         }
 
-        JwtDTO jwt = new JwtDTO();
+        JWTDto jwt = new JWTDto();
         jwt.setToken(jwtTokenUtil.createToken(loginId, 30));
-        jwt.setSuccess(Boolean.TRUE);
         return jwt;
     }
 
