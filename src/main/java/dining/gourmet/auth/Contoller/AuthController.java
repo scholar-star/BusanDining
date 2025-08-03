@@ -39,7 +39,6 @@ public class AuthController {
         ResultDTO result = userService.insertUser(userDTO);
         log.info(result.toString());
         if(result.isSuccess()) {
-
             return "redirect:/busan/login";
         }
         else {

@@ -1,15 +1,11 @@
 package dining.gourmet.jwt;
-import dining.gourmet.security.SecurityConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dining.gourmet.Entity.RestaurantEntity;
 import dining.gourmet.auth.DTO.RestaurantDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
+import dining.gourmet.jsonobject.RestaurantJson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,8 +72,14 @@ public class RestaurantService {
         }
     }
 
-    public ResultDTO restaurants(String jsonData) {
+    public ResultDTO restaurants() {
         String query = "부산 맛집";
+
+        RestaurantJson json = new RestaurantJson();
+        json.setTextQuery(query);
+        json.setLanguageCode("ko");
+        json.setMinRating(4.0f);
+
         WebClient webClient = WebClient.builder().
                 baseUrl("https://maps.googleapis.com")
                 .build();
@@ -80,15 +87,18 @@ public class RestaurantService {
         Mono<String> resultMono = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/places:searchText")
+                        .queryParam("language", "ko")
                         .build())
                 .header("X-Goog-Api-Key", clientSecret)
                 .header("Content-Type", "application/json")
                 .header("X-Goog-FieldMask", "places.id,places.displayName,places.formattedAddress,places.rating,places.priceLevel,places.location,places.types")
+                .bodyValue(json)
                 .retrieve()
                 .bodyToMono(String.class);
 
         // block()을 사용하면 동기적으로 응답을 받을 수도 있음
         String result = resultMono.block();
+        log.info(result);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode rootNode = objectMapper.readTree(result);

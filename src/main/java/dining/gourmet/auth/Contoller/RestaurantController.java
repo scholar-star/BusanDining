@@ -4,7 +4,6 @@ import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.service.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,10 +21,10 @@ public class RestaurantController {
 
     @GetMapping("/busan/restaurants")
     @ResponseBody
-    public ResultDTO RestaurantController(String jsonData) {
+    public ResultDTO RestaurantController() {
         ResultDTO resultDTO = new ResultDTO();
         try {
-            resultDTO = restaurantService.restaurants(jsonData);
+            resultDTO = restaurantService.restaurants();
             resultDTO.setSuccess(Boolean.TRUE);
             resultDTO.setMessage("Success");
         } catch(Exception e) {
