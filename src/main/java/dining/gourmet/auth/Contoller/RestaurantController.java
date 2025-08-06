@@ -22,6 +22,7 @@ public class RestaurantController {
     @GetMapping("/busan/restaurants")
     @ResponseBody
     public ResultDTO RestaurantController() {
+        log.info("RestaurantController");
         ResultDTO resultDTO = new ResultDTO();
         try {
             resultDTO = restaurantService.restaurants();

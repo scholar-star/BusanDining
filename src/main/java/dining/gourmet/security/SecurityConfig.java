@@ -6,6 +6,7 @@ import dining.gourmet.jwt.JwtTokenFilter;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,7 +21,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserService userService;
-    private static String secretkey = "alpha-beta-gamma-delta";
 
     public SecurityConfig(UserService userService) {
         this.userService = userService;
@@ -31,9 +31,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/busan/dining", "/busan/login", "/busan/signup")
-                        .permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/busan/restaurants")
+                        .hasRole("ADMIN")
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginPage("/busan/login")
                         .defaultSuccessUrl("/busan/dining")

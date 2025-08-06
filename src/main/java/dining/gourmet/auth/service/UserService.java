@@ -4,7 +4,6 @@ import dining.gourmet.auth.DTO.JwtDTO;
 import dining.gourmet.auth.DTO.LoginDTO;
 import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.DTO.UserDTO;
-import dining.gourmet.auth.UserType;
 import dining.gourmet.auth.details.User;
 import dining.gourmet.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +49,8 @@ public class UserService implements UserDetailsService {
                         String loginId = rs.getString("login_id");
                         String password = rs.getString("password");
                         String email = rs.getString("email");
-                        String province = rs.getString("province");
-                        String city = rs.getString("city");
-                        String district = rs.getString("district");
-                        return new User(new UserDTO(loginId, password, nickname, email, province, city, district, UserType.USER));
+                        boolean role = rs.getBoolean("role");
+                        return new User(new UserDTO(loginId, password, nickname, email, role));
                     }, username);
             return user;
             // 중간 옵션은 바인딩에 들어갈 변수

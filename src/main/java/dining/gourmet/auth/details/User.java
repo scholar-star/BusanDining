@@ -5,8 +5,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class User implements UserDetails {
     private final UserDTO user;
@@ -17,9 +19,13 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new
-                SimpleGrantedAuthority(user.getRole().toString()));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (user.isRole())
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        else
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         // User의 역할을 SingletonList로 변환
+        return authorities;
     }
 
     @Override
