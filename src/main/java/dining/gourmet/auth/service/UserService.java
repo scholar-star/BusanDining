@@ -1,9 +1,6 @@
 package dining.gourmet.auth.service;
 
-import dining.gourmet.auth.DTO.JwtDTO;
-import dining.gourmet.auth.DTO.LoginDTO;
-import dining.gourmet.auth.DTO.ResultDTO;
-import dining.gourmet.auth.DTO.UserDTO;
+import dining.gourmet.auth.DTO.*;
 import dining.gourmet.auth.details.User;
 import dining.gourmet.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +27,8 @@ public class UserService implements UserDetailsService {
     public ResultDTO insertUser(UserDTO userDTO) {
         try {
             String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
-            String sql = "insert into users(username, login_id, password) values (?, ?, ?)";
-            jdbcTemplate.update(sql, userDTO.getNickname(), userDTO.getId(), encryptedPassword);
+            String sql = "insert into users(username, login_id, password, email, role) values (?, ?, ?, ?, 0)";
+            jdbcTemplate.update(sql, userDTO.getNickname(), userDTO.getId(), encryptedPassword, userDTO.getEmail());
             return new ResultDTO(true, "Inserted user successfully");
         }
         catch (Exception e) {
@@ -50,7 +47,7 @@ public class UserService implements UserDetailsService {
                         String password = rs.getString("password");
                         String email = rs.getString("email");
                         boolean role = rs.getBoolean("role");
-                        return new User(new UserDTO(loginId, password, nickname, email, role));
+                        return new User(new UserInfoDTO(loginId, password, nickname, email, role));
                     }, username);
             return user;
             // 중간 옵션은 바인딩에 들어갈 변수

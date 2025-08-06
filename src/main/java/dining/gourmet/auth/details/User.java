@@ -1,19 +1,18 @@
 package dining.gourmet.auth.details;
 
 import dining.gourmet.auth.DTO.UserDTO;
+import dining.gourmet.auth.DTO.UserInfoDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class User implements UserDetails {
-    private final UserDTO user;
+    private final UserInfoDTO user;
 
-    public User(UserDTO user) {
+    public User(UserInfoDTO user) {
         this.user = user;
     }
 

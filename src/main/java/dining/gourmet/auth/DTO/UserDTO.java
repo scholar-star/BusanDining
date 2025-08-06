@@ -11,9 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private String id;
-    private String password;
-    private String nickname;
-    private String email;
-    private boolean role;
+
 }
