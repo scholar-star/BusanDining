@@ -1,334 +1,430 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .signup-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .required {
-            color: red;
-        }
-
-        input[type="text"], input[type="password"], input[type="email"], select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-
-        .address-group {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        .address-group > div {
-            flex: 1;
-        }
-
-        .btn-submit {
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .signup-header h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .signup-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: #c7d2fe;
+        }
+
+        .form-group select:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .address-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .address-row .form-group {
+            flex: 1;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 480px) {
+            .address-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
             margin-top: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-submit:hover {
-            background-color: #45a049;
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .error-message {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
+        .signup-btn:active {
+            transform: translateY(0);
         }
 
         .login-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
         }
 
         .login-link a {
-            color: #4CAF50;
+            color: #667eea;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .login-link a:hover {
-            text-decoration: underline;
+            color: #5a67d8;
         }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .field-error {
+            border-color: #e74c3c !important;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 30px 20px;
+            }
+
+            .signup-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        .password-strength {
+            font-size: 12px;
+            margin-top: 5px;
+            height: 15px;
+        }
+
+        .strength-weak { color: #e74c3c; }
+        .strength-medium { color: #f39c12; }
+        .strength-strong { color: #27ae60; }
     </style>
 </head>
 <body>
 <div class="signup-container">
-    <h1>회원가입</h1>
+    <div class="signup-header">
+        <h1>회원가입</h1>
+        <p>새로운 계정을 만들어보세요</p>
+    </div>
 
-    <form th:action="@{/busan/auth}" th:object="${userDTO}" method="post">
-        <!-- 아이디 (필수) -->
+    <!-- 성공 메시지 -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}">회원가입이 완료되었습니다! 🎉</span>
+    </div>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}">오류가 발생했습니다.</span>
+    </div>
+
+    <form th:action="@{/busan/auth}" th:object="${userDTO}" method="post" novalidate>
         <div class="form-group">
-            <label for="username">아이디 <span class="required">*</span></label>
+            <label for="name">이름<span class="required">*</span></label>
+            <input type="text"
+                   id="name"
+                   th:field="*{username}"
+                   th:class="${#fields.hasErrors('username')} ? 'field-error' : ''"
+                   placeholder="이름을 입력하세요">
+            <div th:if="${#fields.hasErrors('username')}"
+                 th:errors="*{username}"
+                 class="error-message">이름을 입력해주세요.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="username">아이디<span class="required">*</span></label>
             <input type="text"
                    id="username"
-                   name="username"
                    th:field="*{id}"
-                   th:class="${#fields.hasErrors('id')} ? 'error' : ''"
-                   placeholder="아이디를 입력하세요"
-                   required>
+                   th:class="${#fields.hasErrors('id')} ? 'field-error' : ''"
+                   placeholder="아이디를 입력하세요">
             <div th:if="${#fields.hasErrors('id')}"
                  th:errors="*{id}"
-                 class="error-message">
-            </div>
+                 class="error-message">아이디를 입력해주세요.</div>
         </div>
 
-        <!-- 비밀번호 (필수) -->
         <div class="form-group">
-            <label for="password">비밀번호 <span class="required">*</span></label>
+            <label for="password">비밀번호<span class="required">*</span></label>
             <input type="password"
                    id="password"
-                   name="password"
                    th:field="*{password}"
-                   th:class="${#fields.hasErrors('password')} ? 'error' : ''"
-                   placeholder="비밀번호를 입력하세요"
-                   required>
+                   th:class="${#fields.hasErrors('password')} ? 'field-error' : ''"
+                   placeholder="비밀번호를 입력하세요">
+            <div class="password-strength" id="passwordStrength"></div>
             <div th:if="${#fields.hasErrors('password')}"
                  th:errors="*{password}"
-                 class="error-message">
-            </div>
+                 class="error-message">비밀번호를 입력해주세요.</div>
         </div>
 
-        <!-- 비밀번호 확인 (필수) -->
-        <div class="form-group">
-            <label for="passwordConfirm">비밀번호 확인 <span class="required">*</span></label>
-            <input type="password"
-                   id="passwordConfirm"
-                   name="passwordConfirm"
-                   th:field="*{passwordConfirm}"
-                   th:class="${#fields.hasErrors('passwordConfirm')} ? 'error' : ''"
-                   placeholder="비밀번호를 다시 입력하세요"
-                   required>
-            <div th:if="${#fields.hasErrors('passwordConfirm')}"
-                 th:errors="*{passwordConfirm}"
-                 class="error-message">
-            </div>
-        </div>
-
-        <!-- 닉네임 (필수) -->
-        <div class="form-group">
-            <label for="nickname">닉네임 <span class="required">*</span></label>
-            <input type="text"
-                   id="nickname"
-                   name="nickname"
-                   th:field="*{nickname}"
-                   th:class="${#fields.hasErrors('nickname')} ? 'error' : ''"
-                   placeholder="닉네임을 입력하세요"
-                   required>
-            <div th:if="${#fields.hasErrors('nickname')}"
-                 th:errors="*{nickname}"
-                 class="error-message">
-            </div>
-        </div>
-
-        <!-- 이메일 (선택) -->
         <div class="form-group">
             <label for="email">이메일</label>
             <input type="email"
                    id="email"
-                   name="email"
                    th:field="*{email}"
-                   th:class="${#fields.hasErrors('email')} ? 'error' : ''"
-                   placeholder="이메일을 입력하세요 (선택사항)">
+                   th:class="${#fields.hasErrors('email')} ? 'field-error' : ''"
+                   placeholder="example@email.com">
             <div th:if="${#fields.hasErrors('email')}"
                  th:errors="*{email}"
-                 class="error-message">
+                 class="error-message">올바른 이메일 형식이 아닙니다.</div>
+        </div>
+
+        <div class="address-row">
+            <div class="form-group">
+                <label for="gu">구</label>
+                <select id="gu" th:field="*{city}">
+                    <option value="">구를 선택하세요</option>
+                    <option value="강서구">강서구</option>
+                    <option value="금정구">금정구</option>
+                    <option value="기장군">기장군</option>
+                    <option value="남구">남구</option>
+                    <option value="동구">동구</option>
+                    <option value="동래구">동래구</option>
+                    <option value="북구">북구</option>
+                    <option value="부산진구">부산진구</option>
+                    <option value="사상구">사상구</option>
+                    <option value="사하구">사하구</option>
+                    <option value="서구">서구</option>
+                    <option value="수영구">수영구</option>
+                    <option value="영도구">영도구</option>
+                    <option value="중구">중구</option>
+                    <option value="해운대구">해운대구</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dong">동</label>
+                <select id="dong" th:field="*{district}" disabled>
+                    <option value="">먼저 구를 선택하세요</option>
+                </select>
             </div>
         </div>
 
-        <!-- 주소 선택 (선택) -->
-        <div class="form-group">
-            <label>주소</label>
-            <div class="address-group">
-                <!-- 시/도 -->
-                <div>
-                    <select id="province"
-                            name="province"
-                            th:field="*{province}"
-                            onchange="updateCity()">
-                        <option value="">시/도 선택</option>
-                        <option value="서울특별시">서울특별시</option>
-                        <option value="부산광역시">부산광역시</option>
-                        <option value="대구광역시">대구광역시</option>
-                        <option value="인천광역시">인천광역시</option>
-                        <option value="광주광역시">광주광역시</option>
-                        <option value="대전광역시">대전광역시</option>
-                        <option value="울산광역시">울산광역시</option>
-                        <option value="세종특별자치시">세종특별자치시</option>
-                        <option value="경기도">경기도</option>
-                        <option value="강원도">강원도</option>
-                        <option value="충청북도">충청북도</option>
-                        <option value="충청남도">충청남도</option>
-                        <option value="전라북도">전라북도</option>
-                        <option value="전라남도">전라남도</option>
-                        <option value="경상북도">경상북도</option>
-                        <option value="경상남도">경상남도</option>
-                        <option value="제주특별자치도">제주특별자치도</option>
-                    </select>
-                </div>
+        <!-- CSRF 토큰 (Spring Security 사용 시) -->
+        <input type="hidden"
+               th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
 
-                <!-- 시/군/구 -->
-                <div>
-                    <select id="city"
-                            name="city"
-                            th:field="*{city}"
-                            onchange="updateDistrict()">
-                        <option value="">시/군/구 선택</option>
-                    </select>
-                </div>
-
-                <!-- 읍/면/동 -->
-                <div>
-                    <select id="district"
-                            name="district"
-                            th:field="*{district}">
-                        <option value="">읍/면/동 선택</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- 전체 에러 메시지 -->
-        <div th:if="${#fields.hasGlobalErrors()}"
-             th:each="error : ${#fields.globalErrors()}"
-             class="error-message">
-            <span th:text="${error}"></span>
-        </div>
-
-        <!-- 회원가입 버튼 -->
-        <button type="submit" class="btn-submit">회원가입</button>
+        <button type="submit" class="signup-btn">회원가입</button>
     </form>
 
-
+    <div class="login-link">
+        이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+    </div>
 </div>
 
-<script>
-    // 주소 데이터
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // 구별 동 데이터 (서버에서 전달받거나 하드코딩)
     const addressData = {
-        "서울특별시": {
-            "강남구": ["개포동", "논현동", "대치동", "도곡동", "삼성동", "압구정동", "청담동"],
-            "강북구": ["미아동", "번동", "수유동", "우이동"],
-            "종로구": ["견지동", "경운동", "계동", "공평동", "관훈동", "관철동"],
-            "중구": ["남산동", "다동", "동화동", "명동", "무교동", "봉래동"]
-        },
-        "부산광역시": {
-            "해운대구": ["반여동", "반송동", "송정동", "우동", "재송동", "좌동", "중동"],
-            "부산진구": ["가야동", "개금동", "당감동", "범천동", "부암동", "연지동", "전포동"],
-            "동래구": ["명륜동", "복천동", "사직동", "안락동", "온천동", "칠산동"],
-            "수영구": ["광안동", "남천동", "망미동", "민락동", "수영동"]
-        },
-        "경기도": {
-            "성남시 분당구": ["정자동", "수내동", "구미동", "서현동", "이매동", "야탑동", "금곡동"],
-            "성남시 수정구": ["태평동", "수진동", "단대동", "복정동", "신흥동", "중앙동"],
-            "수원시 영통구": ["영통동", "원천동", "하동", "광교동", "매탄동", "이의동"],
-            "수원시 장안구": ["정자동", "천천동", "영화동", "조원동", "연무동", "파장동"],
-            "용인시 기흥구": ["기흥동", "구갈동", "보정동", "상갈동", "신갈동", "영덕동"],
-            "고양시 일산동구": ["백석동", "마두동", "장항동", "정발산동", "중산동", "식사동"]
-        },
-        "인천광역시": {
-            "남동구": ["간석동", "고잔동", "논현동", "만수동", "서창동", "수산동", "운연동"],
-            "부평구": ["갈산동", "부평동", "산곡동", "십정동", "청천동"],
-            "연수구": ["동춘동", "송도동", "연수동", "청학동"],
-            "중구": ["경동", "관동", "답동", "도원동", "무의동", "북성동", "선린동"]
-        },
-        "대구광역시": {
-            "수성구": ["범어동", "상동", "신매동", "연호동", "지산동", "파동", "황금동"],
-            "달서구": ["갈산동", "대곡동", "도원동", "본동", "상인동", "성서동", "월성동"],
-            "중구": ["남산동", "대봉동", "대신동", "동인동", "삼덕동", "성내동", "수동"]
-        }
+        "강서구" : ["가락동", "가덕도동", "강동동", "녹산동", "대저동","명지동","신호동"],
+        "금정구" : ["구서동","금사동","금성동","남산동","부곡동","서동","선두구동","장전동","청룡노포동"],
+        "기장군" : ["기장읍","일광면","장안읍","정관읍","철마면"],
+        "남구" : ["감만동","대연동","문현동", "용호동","우암동"],
+        "동구" : ["범일동", "수정동", "좌천동", "초량동"],
+        "동래구": ["명륜동", "복산동", "사직동", "수민동", "안락동", "온천동", "명장동"],
+        "북구" : ["구포동","금곡동","덕천동","만덕동","화명동"],
+        "부산진구": ["가야동", "개금동", "당감동", "범천동", "부암동", "부전동", "연지동", "양정동", "전포동", "초읍동"],
+        "사상구" : ["감전동", "괘법동", "덕포동", "모라동", "삼락동", "엄궁동", "주례동", "학장동"],
+        "사하구" : ["괴정동", "당리동", "하단동","신평동", "장림동","다대동","감천동","구평동"],
+        "서구" : ["남부민동", "동대신동", "부민동", "서대신동", "아미동", "암남동", "초장동", "충무동"],
+        "수영구": ["광안동", "남천동", "망미동", "민락동", "수영동"],
+        "영도구" : ["남항동", "동삼동", "봉래동", "영선동", "신선동", "청학동"],
+        "중구" : ["광복동", "남포동", "동광동", "대청동", "보수동", "부평동", "중앙동", "영주동"],
+        "해운대구": ["반여동", "반송동", "우동", "송정동", "재송동", "중동", "좌동"]
     };
 
-    function updateCity() {
-        const province = document.getElementById('province').value;
-        const citySelect = document.getElementById('city');
-        const districtSelect = document.getElementById('district');
+    // 구 선택 시 동 목록 업데이트
+    document.getElementById('gu').addEventListener('change', function() {
+        const guValue = this.value;
+        const dongSelect = document.getElementById('dong');
 
-        console.log('Selected province:', province);
+        // 동 선택 초기화
+        dongSelect.innerHTML = '';
 
-        // 시/군/구 초기화
-        citySelect.innerHTML = '<option value="">시/군/구 선택</option>';
-        districtSelect.innerHTML = '<option value="">읍/면/동 선택</option>';
+        if (guValue === '') {
+            dongSelect.innerHTML = '<option value="">먼저 구를 선택하세요</option>';
+            dongSelect.disabled = true;
+        } else {
+            dongSelect.innerHTML = '<option value="">동을 선택하세요</option>';
 
-        if (province && addressData[province]) {
-            console.log('Cities for', province, ':', Object.keys(addressData[province]));
-            Object.keys(addressData[province]).forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
+            // 해당 구의 동 목록 추가
+            if (addressData[guValue]) {
+                addressData[guValue].forEach(dong => {
+                    const option = document.createElement('option');
+                    option.value = dong;
+                    option.textContent = dong;
+                    dongSelect.appendChild(option);
+                });
+            }
+            dongSelect.disabled = false;
         }
-    }
+    });
 
-    function updateDistrict() {
-        const province = document.getElementById('province').value;
-        const city = document.getElementById('city').value;
-        const districtSelect = document.getElementById('district');
+    // 페이지 로드 시 기존 선택값 복원 (유효성 검사 실패 시)
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedGu = document.getElementById('gu').value;
+        const selectedDong = /*[[${signupForm?.dong}]]*/ null;
 
-        console.log('Selected province:', province, 'city:', city);
+        if (selectedGu) {
+            // 구가 선택되어 있으면 동 목록 업데이트
+            const changeEvent = new Event('change');
+            document.getElementById('gu').dispatchEvent(changeEvent);
 
-        // 읍/면/동 초기화
-        districtSelect.innerHTML = '<option value="">읍/면/동 선택</option>';
-
-        if (province && city && addressData[province] && addressData[province][city]) {
-            console.log('Districts for', city, ':', addressData[province][city]);
-            addressData[province][city].forEach(district => {
-                const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                districtSelect.appendChild(option);
-            });
+            // 동이 선택되어 있으면 복원
+            if (selectedDong) {
+                setTimeout(() => {
+                    document.getElementById('dong').value = selectedDong;
+                }, 100);
+            }
         }
-    }
+    });
+
+    // 비밀번호 강도 체크
+    const passwordInput = document.getElementById('password');
+    const passwordStrength = document.getElementById('passwordStrength');
+
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        if (password.length === 0) {
+            passwordStrength.textContent = '';
+            return;
+        }
+
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        if (strength <= 2) {
+            passwordStrength.textContent = '약함';
+            passwordStrength.className = 'password-strength strength-weak';
+        } else if (strength <= 3) {
+            passwordStrength.textContent = '보통';
+            passwordStrength.className = 'password-strength strength-medium';
+        } else {
+            passwordStrength.textContent = '강함';
+            passwordStrength.className = 'password-strength strength-strong';
+        }
+    });
+
+    /*]]>*/
 </script>
 </body>
 </html>

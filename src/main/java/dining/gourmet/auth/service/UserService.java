@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
         try {
             String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
             String sql = "insert into users(username, login_id, password, email, role) values (?, ?, ?, ?, 0)";
-            jdbcTemplate.update(sql, userDTO.getNickname(), userDTO.getId(), encryptedPassword, userDTO.getEmail());
+            jdbcTemplate.update(sql, userDTO.getUsername(), userDTO.getId(), encryptedPassword, userDTO.getEmail());
             return new ResultDTO(true, "Inserted user successfully");
         }
         catch (Exception e) {

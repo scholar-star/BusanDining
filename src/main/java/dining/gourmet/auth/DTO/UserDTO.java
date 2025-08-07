@@ -1,6 +1,5 @@
 package dining.gourmet.auth.DTO;
 
-import dining.gourmet.auth.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-
+    private String username;
+    private String id;
+    private String password;
+    private String passwordConfirm;
+    private String email;
+    private Long city;
+    private Long district;
 }
