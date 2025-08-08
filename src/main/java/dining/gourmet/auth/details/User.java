@@ -1,6 +1,5 @@
 package dining.gourmet.auth.details;
 
-import dining.gourmet.auth.DTO.UserDTO;
 import dining.gourmet.auth.DTO.UserInfoDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,9 +10,11 @@ import java.util.List;
 
 public class User implements UserDetails {
     private final UserInfoDTO user;
+    private final int id;
 
-    public User(UserInfoDTO user) {
+    public User(UserInfoDTO user, int id) {
         this.user = user;
+        this.id = id;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return user.getUsername();
     }
 
     @Override
@@ -60,4 +61,6 @@ public class User implements UserDetails {
     public String getLoginId() {
         return user.getId();
     }
+
+    public int getId() { return id; }
 }

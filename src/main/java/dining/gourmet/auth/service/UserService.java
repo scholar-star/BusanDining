@@ -25,11 +25,26 @@ public class UserService implements UserDetailsService {
     private String secret;
 
     public ResultDTO insertUser(UserDTO userDTO) {
+        UserInfoDTO userInfoDTO = new UserInfoDTO(
+                userDTO.getId(), userDTO.getPassword(), userDTO.getUsername(), userDTO.getEmail(), false);
         try {
-            String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
-            String sql = "insert into users(username, login_id, password, email, role) values (?, ?, ?, ?, 0)";
-            jdbcTemplate.update(sql, userDTO.getUsername(), userDTO.getId(), encryptedPassword, userDTO.getEmail());
-            return new ResultDTO(true, "Inserted user successfully");
+            String encryptedPassword = passwordEncoder.encode(userInfoDTO.getPassword());
+            String insertSql = "insert into user_info(username, login_id, password, email, role) values (?, ?, ?, ?, 0)";
+            jdbcTemplate.update(
+                    insertSql, userInfoDTO.getUsername(), userInfoDTO.getId(), encryptedPassword, userInfoDTO.getEmail());
+
+            User user = loadUserByUsername(userInfoDTO.getUsername());
+            int userId = user.getId();
+
+            UserAddressDTO userAddressDTO = new UserAddressDTO(
+                    userId, userDTO.getCity(), userDTO.getDistrict()
+            );
+
+            String addressSql = "insert into user_address(user_id, gu, dong) values (?,?,?)";
+            jdbcTemplate.update(
+                    addressSql, userId, userAddressDTO.getGu(), userAddressDTO.getDong()
+            );
+            return new ResultDTO(true, "Data Insert Success");
         }
         catch (Exception e) {
             return new ResultDTO(false, "Inserted user failed");
@@ -37,17 +52,18 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         String sql = "select * from users where login_id = ?";
         try {
-            UserDetails user = jdbcTemplate.queryForObject(sql,
+            User user = jdbcTemplate.queryForObject(sql,
                     (rs, rowNum) -> {
+                        int id = rs.getInt("id");
                         String nickname = rs.getString("username");
                         String loginId = rs.getString("login_id");
                         String password = rs.getString("password");
                         String email = rs.getString("email");
                         boolean role = rs.getBoolean("role");
-                        return new User(new UserInfoDTO(loginId, password, nickname, email, role));
+                        return new User(new UserInfoDTO(loginId, password, nickname, email, role), id);
                     }, username);
             return user;
             // 중간 옵션은 바인딩에 들어갈 변수
