@@ -15,6 +15,6 @@ public class UserDTO {
     private String password;
     private String passwordConfirm;
     private String email;
-    private String city;
-    private String district;
+    private Integer city;
+    private Integer district;
 }

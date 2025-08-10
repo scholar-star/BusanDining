@@ -6,9 +6,9 @@
     <title>회원가입</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
@@ -21,107 +21,120 @@
             padding: 20px;
         }
 
-        .signup-container {
+        .registration-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
             width: 100%;
             max-width: 500px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.6s ease-out;
         }
 
-        .signup-header {
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
             text-align: center;
             margin-bottom: 30px;
-        }
-
-        .signup-header h1 {
             color: #333;
             font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .signup-header p {
-            color: #666;
-            font-size: 14px;
+            font-weight: 700;
         }
 
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
+            color: #555;
+            font-weight: 600;
             font-size: 14px;
         }
 
         .required {
             color: #e74c3c;
-            margin-left: 4px;
         }
 
-        .form-group input,
-        .form-group select {
+        .optional {
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .form-group input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e1e8ed;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
             border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s ease;
             background: white;
-            outline: none;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         .form-group input:focus,
         .form-group select:focus {
+            outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             transform: translateY(-2px);
         }
 
-        .form-group input:hover,
-        .form-group select:hover {
-            border-color: #c7d2fe;
-        }
-
-        .form-group select:disabled {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-
+        /* 주소 선택을 한 줄로 배치 */
         .address-row {
-            display: flex;
-            gap: 15px;
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 15px !important;
+            width: 100% !important;
         }
 
-        .address-row .form-group {
-            flex: 1;
-            margin-bottom: 25px;
+        .address-row select {
+            flex: 1 !important;
+            width: auto !important;
+            min-width: 0 !important;
+            padding: 15px !important;
+            border: 2px solid #e0e6ed !important;
+            border-radius: 12px !important;
+            font-size: 16px !important;
+            transition: all 0.3s ease !important;
+            background: white !important;
         }
 
-        @media (max-width: 480px) {
-            .address-row {
-                flex-direction: column;
-                gap: 0;
-            }
+        .address-row select:focus {
+            outline: none !important;
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+            transform: translateY(-2px) !important;
         }
 
-        .signup-btn {
+        .submit-btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -130,301 +143,259 @@
             overflow: hidden;
         }
 
-        .signup-btn:hover {
+        .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .signup-btn:active {
+        .submit-btn:active {
             transform: translateY(0);
         }
 
-        .login-link {
+        .form-footer {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
             color: #666;
             font-size: 14px;
         }
 
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .login-link a:hover {
-            color: #5a67d8;
-        }
-
         .error-message {
-            color: #e74c3c;
-            font-size: 12px;
             margin-top: 5px;
+            font-size: 12px;
+            color: #e74c3c;
+        }
+
+        .success-message {
+            color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .field-error {
             border-color: #e74c3c !important;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
         }
 
-        .success-message {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .alert {
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-        }
-
-        @media (max-width: 480px) {
-            .signup-container {
+        @media (max-width: 600px) {
+            .registration-container {
                 padding: 30px 20px;
             }
 
-            .signup-header h1 {
-                font-size: 24px;
+            .address-row {
+                flex-direction: column;
             }
         }
-
-        .password-strength {
-            font-size: 12px;
-            margin-top: 5px;
-            height: 15px;
-        }
-
-        .strength-weak { color: #e74c3c; }
-        .strength-medium { color: #f39c12; }
-        .strength-strong { color: #27ae60; }
     </style>
 </head>
 <body>
-<div class="signup-container">
-    <div class="signup-header">
-        <h1>회원가입</h1>
-        <p>새로운 계정을 만들어보세요</p>
+<div class="registration-container">
+    <h1 class="form-title">회원가입</h1>
+
+    <!-- 성공 메시지 표시 -->
+    <div th:if="${successMessage}" class="success-message" th:text="${successMessage}">
+        회원가입이 완료되었습니다!
     </div>
 
-    <!-- 성공 메시지 -->
-    <div th:if="${successMessage}" class="alert alert-success">
-        <span th:text="${successMessage}">회원가입이 완료되었습니다! 🎉</span>
+    <!-- 일반 에러 메시지 표시 -->
+    <div th:if="${errorMessage}" class="error-message" style="background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center;" th:text="${errorMessage}">
     </div>
 
-    <!-- 에러 메시지 -->
-    <div th:if="${errorMessage}" class="alert alert-danger">
-        <span th:text="${errorMessage}">오류가 발생했습니다.</span>
-    </div>
+    <form th:action="@{/busan/auth}" th:object="${userDTO}" method="post">
 
-    <form th:action="@{/busan/auth}" th:object="${userDTO}" method="post" novalidate>
+        <!-- 이름 입력 -->
         <div class="form-group">
-            <label for="name">이름<span class="required">*</span></label>
+            <label for="name">이름 <span class="required">*</span></label>
             <input type="text"
                    id="name"
                    th:field="*{username}"
                    th:class="${#fields.hasErrors('username')} ? 'field-error' : ''"
-                   placeholder="이름을 입력하세요">
+                   required>
             <div th:if="${#fields.hasErrors('username')}"
-                 th:errors="*{username}"
-                 class="error-message">이름을 입력해주세요.</div>
+                 class="error-message"
+                 th:errors="*{username}">
+            </div>
         </div>
 
+        <!-- 아이디 입력 -->
         <div class="form-group">
-            <label for="username">아이디<span class="required">*</span></label>
+            <label for="username">아이디 <span class="required">*</span></label>
             <input type="text"
                    id="username"
                    th:field="*{id}"
                    th:class="${#fields.hasErrors('id')} ? 'field-error' : ''"
-                   placeholder="아이디를 입력하세요">
+                   required>
             <div th:if="${#fields.hasErrors('id')}"
-                 th:errors="*{id}"
-                 class="error-message">아이디를 입력해주세요.</div>
+                 class="error-message"
+                 th:errors="*{id}">
+            </div>
         </div>
 
+        <!-- 비밀번호 입력 -->
         <div class="form-group">
-            <label for="password">비밀번호<span class="required">*</span></label>
+            <label for="password">비밀번호 <span class="required">*</span></label>
             <input type="password"
                    id="password"
                    th:field="*{password}"
                    th:class="${#fields.hasErrors('password')} ? 'field-error' : ''"
-                   placeholder="비밀번호를 입력하세요">
-            <div class="password-strength" id="passwordStrength"></div>
+                   required>
             <div th:if="${#fields.hasErrors('password')}"
-                 th:errors="*{password}"
-                 class="error-message">비밀번호를 입력해주세요.</div>
+                 class="error-message"
+                 th:errors="*{password}">
+            </div>
         </div>
 
+        <!-- 이메일 입력 (선택사항) -->
         <div class="form-group">
-            <label for="email">이메일</label>
+            <label for="email">이메일 <span class="optional">(선택사항)</span></label>
             <input type="email"
                    id="email"
                    th:field="*{email}"
-                   th:class="${#fields.hasErrors('email')} ? 'field-error' : ''"
-                   placeholder="example@email.com">
+                   th:class="${#fields.hasErrors('email')} ? 'field-error' : ''">
             <div th:if="${#fields.hasErrors('email')}"
-                 th:errors="*{email}"
-                 class="error-message">올바른 이메일 형식이 아닙니다.</div>
-        </div>
-
-        <div class="address-row">
-            <div class="form-group">
-                <label for="gu">구</label>
-                <select id="gu" th:field="*{city}">
-                    <option value="">구를 선택하세요</option>
-                    <option value="강서구">강서구</option>
-                    <option value="금정구">금정구</option>
-                    <option value="기장군">기장군</option>
-                    <option value="남구">남구</option>
-                    <option value="동구">동구</option>
-                    <option value="동래구">동래구</option>
-                    <option value="북구">북구</option>
-                    <option value="부산진구">부산진구</option>
-                    <option value="사상구">사상구</option>
-                    <option value="사하구">사하구</option>
-                    <option value="서구">서구</option>
-                    <option value="수영구">수영구</option>
-                    <option value="영도구">영도구</option>
-                    <option value="중구">중구</option>
-                    <option value="해운대구">해운대구</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="dong">동</label>
-                <select id="dong" th:field="*{district}" disabled>
-                    <option value="">먼저 구를 선택하세요</option>
-                </select>
+                 class="error-message"
+                 th:errors="*{email}">
             </div>
         </div>
 
-        <!-- CSRF 토큰 (Spring Security 사용 시) -->
-        <input type="hidden"
-               th:if="${_csrf != null}"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
+        <!-- 주소 선택 (선택사항) - 구와 동을 한 줄에 배치하겠습니다 -->
+        <div class="form-group">
+            <label>주소 <span class="optional">(선택사항)</span></label>
+            <div class="address-row">
+                <select id="district"
+                        th:field="*{city}"
+                        th:class="${#fields.hasErrors('city')} ? 'field-error' : ''">
+                    <option value="">구 선택</option>
+                    <!-- 구 목록은 JavaScript로 동적 로딩 -->
+                </select>
 
-        <button type="submit" class="signup-btn">회원가입</button>
+                <select id="dong"
+                        th:field="*{district}"
+                        th:class="${#fields.hasErrors('district')} ? 'field-error' : ''"
+                        th:disabled="${userDTO.city == null or userDTO.city == ''}">
+                    <option value="">동 선택</option>
+                    <option th:each="dong : ${dongs}"
+                            th:value="${dong.id}"
+                            th:text="${dong.name}"
+                            th:selected="${dong.id == userDTO.district}">
+                    </option>
+                </select>
+            </div>
+            <!-- 에러 메시지를 드롭다운 밖으로 이동 -->
+            <div th:if="${#fields.hasErrors('city')}"
+                 class="error-message"
+                 th:errors="*{city}">
+            </div>
+            <div th:if="${#fields.hasErrors('district')}"
+                 class="error-message"
+                 th:errors="*{district}">
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">회원가입</button>
     </form>
 
-    <div class="login-link">
-        이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+    <div class="form-footer">
+        이미 계정이 있으신가요? <a th:href="@{/login}" style="color: #667eea; text-decoration: none;">로그인</a>
     </div>
 </div>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-
-    // 구별 동 데이터 (서버에서 전달받거나 하드코딩)
-    const addressData = {
-        "강서구" : ["가락동", "가덕도동", "강동동", "녹산동", "대저동","명지동","신호동"],
-        "금정구" : ["구서동","금사동","금성동","남산동","부곡동","서동","선두구동","장전동","청룡노포동"],
-        "기장군" : ["기장읍","일광면","장안읍","정관읍","철마면"],
-        "남구" : ["감만동","대연동","문현동", "용호동","우암동"],
-        "동구" : ["범일동", "수정동", "좌천동", "초량동"],
-        "동래구": ["명륜동", "복산동", "사직동", "수민동", "안락동", "온천동", "명장동"],
-        "북구" : ["구포동","금곡동","덕천동","만덕동","화명동"],
-        "부산진구": ["가야동", "개금동", "당감동", "범천동", "부암동", "부전동", "연지동", "양정동", "전포동", "초읍동"],
-        "사상구" : ["감전동", "괘법동", "덕포동", "모라동", "삼락동", "엄궁동", "주례동", "학장동"],
-        "사하구" : ["괴정동", "당리동", "하단동","신평동", "장림동","다대동","감천동","구평동"],
-        "서구" : ["남부민동", "동대신동", "부민동", "서대신동", "아미동", "암남동", "초장동", "충무동"],
-        "수영구": ["광안동", "남천동", "망미동", "민락동", "수영동"],
-        "영도구" : ["남항동", "동삼동", "봉래동", "영선동", "신선동", "청학동"],
-        "중구" : ["광복동", "남포동", "동광동", "대청동", "보수동", "부평동", "중앙동", "영주동"],
-        "해운대구": ["반여동", "반송동", "우동", "송정동", "재송동", "중동", "좌동"]
-    };
-
-    // 구 선택 시 동 목록 업데이트
-    document.getElementById('gu').addEventListener('change', function() {
-        const guValue = this.value;
+    // 페이지 로드 시 구 목록을 AJAX로 가져오기
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(document.getElementById('district'))
+        const districtSelect = document.getElementById('district');
         const dongSelect = document.getElementById('dong');
 
-        // 동 선택 초기화
-        dongSelect.innerHTML = '';
+        // 서버에서 전달받은 선택된 값들
+        selectedDistrictId = /*[[${userDTO.city}]]*/ '';
+        selectedDongId = /*[[${userDTO.district}]]*/ '';
 
-        if (guValue === '') {
-            dongSelect.innerHTML = '<option value="">먼저 구를 선택하세요</option>';
-            dongSelect.disabled = true;
-        } else {
-            dongSelect.innerHTML = '<option value="">동을 선택하세요</option>';
+        // 구 목록 로드
+        loadDistricts(selectedDistrictId, selectedDongId);
+    });
 
-            // 해당 구의 동 목록 추가
-            if (addressData[guValue]) {
-                addressData[guValue].forEach(dong => {
+    // 구 목록을 서버에서 가져오는 함수
+    function loadDistricts(selectedDistrictId, selectedDongId) {
+        const districtSelect = document.getElementById('district');
+
+        fetch('/api/gus')
+            .then(response => response.json())
+            .then(districts => {
+                console.log(districts);
+                districtSelect.innerHTML = '<option value="">구 선택</option>';
+                districts.forEach(district => {
                     const option = document.createElement('option');
-                    option.value = dong;
-                    option.textContent = dong;
-                    dongSelect.appendChild(option);
+                    option.value = district.id;
+                    option.textContent = district.gu;
+                    option.selected = district.id == selectedDistrictId;
+                    districtSelect.appendChild(option);
                 });
-            }
-            dongSelect.disabled = false;
-        }
-    });
 
-    // 페이지 로드 시 기존 선택값 복원 (유효성 검사 실패 시)
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectedGu = document.getElementById('gu').value;
-        const selectedDong = /*[[${signupForm?.dong}]]*/ null;
+                if (selectedDistrictId) {
+                     loadDongs(selectedDistrictId, selectedDongId);
+                }
+            })
+            .catch(error => {
+                console.error('구 목록을 가져오는데 실패했습니다:', error);
+            });
+    }
 
-        if (selectedGu) {
-            // 구가 선택되어 있으면 동 목록 업데이트
-            const changeEvent = new Event('change');
-            document.getElementById('gu').dispatchEvent(changeEvent);
+    // 동 목록을 서버에서 가져오는 함수
+    function loadDongs(districtId, selectedDongId = '') {
+        const dongSelect = document.getElementById('dong');
 
-            // 동이 선택되어 있으면 복원
-            if (selectedDong) {
-                setTimeout(() => {
-                    document.getElementById('dong').value = selectedDong;
-                }, 100);
-            }
-        }
-    });
-
-    // 비밀번호 강도 체크
-    const passwordInput = document.getElementById('password');
-    const passwordStrength = document.getElementById('passwordStrength');
-
-    passwordInput.addEventListener('input', function() {
-        const password = this.value;
-        if (password.length === 0) {
-            passwordStrength.textContent = '';
+        if (!districtId) {
+            dongSelect.innerHTML = '<option value="">동 선택</option>';
+            dongSelect.disabled = true;
             return;
         }
 
-        let strength = 0;
-        if (password.length >= 8) strength++;
-        if (/[a-z]/.test(password)) strength++;
-        if (/[A-Z]/.test(password)) strength++;
-        if (/[0-9]/.test(password)) strength++;
-        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        fetch(`/api/dongs/${districtId}`)
+            .then(response => response.json())
+            .then(dongs => {
+                dongSelect.innerHTML = '<option value="">동 선택</option>';
+                dongSelect.disabled = false;
 
-        if (strength <= 2) {
-            passwordStrength.textContent = '약함';
-            passwordStrength.className = 'password-strength strength-weak';
-        } else if (strength <= 3) {
-            passwordStrength.textContent = '보통';
-            passwordStrength.className = 'password-strength strength-medium';
-        } else {
-            passwordStrength.textContent = '강함';
-            passwordStrength.className = 'password-strength strength-strong';
-        }
+                dongs.forEach(dong => {
+                    const option = document.createElement('option');
+                    option.value = dong.id;
+                    option.textContent = dong.dongName;
+                    option.selected = dong.id == selectedDongId;
+                    dongSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('동 목록을 가져오는데 실패했습니다:', error);
+            });
+    }
+
+    // 구 선택 시 동 목록을 AJAX로 가져오기
+    document.getElementById('district').addEventListener('change', function() {
+        const districtId = this.value;
+        loadDongs(districtId);
     });
 
-    /*]]>*/
+    // 실시간 유효성 검사
+    ['name', 'username', 'password'].forEach(fieldName => {
+        document.getElementById(fieldName).addEventListener('input', function() {
+            if (this.classList.contains('field-error') && this.value.trim()) {
+                this.classList.remove('field-error');
+            }
+        });
+    });
+
+    // 이메일 실시간 유효성 검사
+    document.getElementById('email').addEventListener('input', function() {
+        if (this.classList.contains('field-error')) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!this.value.trim() || emailRegex.test(this.value)) {
+                this.classList.remove('field-error');
+            }
+        }
+    });
 </script>
 </body>
 </html>
