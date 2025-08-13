@@ -25,8 +25,11 @@ public class RestaurantService {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${api.secretKey}")
-    private String clientSecret;
+    @Value("${api.gooSecretKey}")
+    private String googleSecret;
+
+    @Value("${api.pubSecretKey}")
+    private String pubSecret;
 
     public List<RestaurantEntity> dtoToEntity(String jsonStr) {
         try {
@@ -80,24 +83,23 @@ public class RestaurantService {
         json.setLanguageCode("ko");
         json.setMinRating(4.0f);
 
-        WebClient webClient = WebClient.builder().
-                baseUrl("https://maps.googleapis.com")
+        WebClient pubAPIClient = WebClient.builder()
+                .baseUrl("http://apis.data.go.kr")
                 .build();
 
-        Mono<String> resultMono = webClient.post()
+        Mono<String> pubMono = pubAPIClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/v1/places:searchText")
-                        .queryParam("language", "ko")
+                        .path("/6260000/FoodService/getFoodKr")
+                        .queryParam("ServiceKey", pubSecret)
+                        .queryParam("pageNo",1)
+                        .queryParam("numOfRows",200)
+                        .queryParam("resultType","json")
                         .build())
-                .header("X-Goog-Api-Key", clientSecret)
-                .header("Content-Type", "application/json")
-                .header("X-Goog-FieldMask", "places.id,places.displayName,places.formattedAddress,places.rating,places.priceLevel,places.location,places.types")
-                .bodyValue(json)
                 .retrieve()
                 .bodyToMono(String.class);
 
         // block()을 사용하면 동기적으로 응답을 받을 수도 있음
-        String result = resultMono.block();
+        String result = pubMono.block();
         log.info(result);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

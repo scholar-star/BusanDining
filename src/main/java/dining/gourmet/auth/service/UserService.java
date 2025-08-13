@@ -37,12 +37,12 @@ public class UserService implements UserDetailsService {
             int userId = user.getId();
 
             UserAddressDTO userAddressDTO = new UserAddressDTO(
-                    userId, userDTO.getCity(), userDTO.getDistrict()
+                    userId, userDTO.getDistrict()
             );
 
-            String addressSql = "insert into user_address(user_id, gu, dong) values (?,?,?)";
+            String addressSql = "insert into user_address(user_id, live_dong_id) values (?,?)";
             jdbcTemplate.update(
-                    addressSql, userId, userAddressDTO.getGu(), userAddressDTO.getDong()
+                    addressSql, userId, userAddressDTO.getDong()
             );
             return new ResultDTO(true, "Data Insert Success");
         }
@@ -53,7 +53,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        String sql = "select * from users where login_id = ?";
+        String sql = "select * from user_info where login_id = ?";
         try {
             User user = jdbcTemplate.queryForObject(sql,
                     (rs, rowNum) -> {

@@ -28,13 +28,13 @@ public class AdminAccountInsert implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try {
-            String checkSql = "SELECT COUNT(*) FROM users WHERE login_id = ?";
+            String checkSql = "SELECT COUNT(*) FROM user_info WHERE login_id = ?";
             Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, adminId);
             log.info(count + " rows affected");
 
             if(count == 0 && count != null) {
                 String encodedPassword = passwordEncoder.encode(adminPassword);
-                String sql = "insert into users(username, login_id, password, role) values (?, ?, ?, ?)";
+                String sql = "insert into user_info(username, login_id, password, role) values (?, ?, ?, ?)";
                 jdbcTemplate.update(sql, "관리자", adminId, encodedPassword, true);
             }
         } catch(Exception e) {
