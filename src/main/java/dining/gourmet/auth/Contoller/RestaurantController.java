@@ -1,6 +1,5 @@
 package dining.gourmet.auth.Contoller;
 
-import dining.gourmet.auth.DTO.ResultDTO;
 import dining.gourmet.auth.service.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

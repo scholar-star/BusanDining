@@ -1,5 +1,6 @@
 package dining.gourmet.jwt;
 
+import dining.gourmet.auth.details.Member;
 import dining.gourmet.auth.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,15 +9,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
@@ -28,11 +31,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            username = jwtTokenUtil.extractUser(token);
+            username = jwtTokenUtil.getNickName(token);
         }
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
+            UserDetails userDetails = new Member(jwtTokenUtil.getLoginID(token), username, jwtTokenUtil.getRole(token));
             if(jwtTokenUtil.validateToken(token, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

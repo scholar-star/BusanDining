@@ -1,6 +1,6 @@
 package dining.gourmet.auth.details;
 
-import dining.gourmet.auth.DTO.UserInfoDTO;
+import dining.gourmet.auth.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,34 +8,36 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class User implements UserDetails {
-    private final UserInfoDTO user;
-    private final int id;
+public class Member implements UserDetails {
+    private String nickname;
+    private String loginID;
+    private UserType userType;
 
-    public User(UserInfoDTO user, int id) {
-        this.user = user;
-        this.id = id;
+    public Member(String nickname, String loginID, UserType userType) {
+        this.nickname = nickname;
+        this.loginID = loginID;
+        this.userType = userType;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        if (user.isRole())
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if (userType == UserType.ADMIN)
+            authorities.add(new SimpleGrantedAuthority(UserType.ADMIN.name()));
         else
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.add(new SimpleGrantedAuthority(UserType.USER.name()));
         // User의 역할을 SingletonList로 변환
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.nickname;
     }
 
     @Override
@@ -59,8 +61,6 @@ public class User implements UserDetails {
     }
 
     public String getLoginId() {
-        return user.getId();
+        return this.loginID;
     }
-
-    public int getId() { return id; }
 }

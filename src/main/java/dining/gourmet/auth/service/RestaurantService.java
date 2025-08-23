@@ -3,9 +3,8 @@ package dining.gourmet.auth.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dining.gourmet.Entity.RestaurantEntity;
-import dining.gourmet.auth.DTO.RestaurantDTO;
-import dining.gourmet.auth.DTO.ResultDTO;
+import dining.gourmet.Entity.Restaurants;
+import dining.gourmet.auth.DTO.PostDTO;
 import dining.gourmet.jsonobject.RestaurantJson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,19 +30,19 @@ public class RestaurantService {
     @Value("${api.pubSecretKey}")
     private String pubSecret;
 
-    public List<RestaurantEntity> dtoToEntity(String jsonStr) {
+    public List<Restaurants> dtoToEntity(String jsonStr) {
         try {
             JsonNode rootNode = objectMapper.readTree(jsonStr);
             JsonNode itemNode = rootNode.path("items");
             String itemData = itemNode.toString();
-            List<RestaurantDTO> itemList = objectMapper.readValue(itemData, new TypeReference<List<RestaurantDTO>>() {});
+            List<PostDTO> itemList = objectMapper.readValue(itemData, new TypeReference<List<PostDTO>>() {});
 
-            List<RestaurantEntity> restsList = new ArrayList<>();
-            for (RestaurantDTO item : itemList) {
+            List<Restaurants> restsList = new ArrayList<>();
+            for (PostDTO item : itemList) {
                 String province = item.getAddress().split(" ")[0];
                 String city = item.getAddress().split(" ")[1];
                 String district = item.getAddress().split(" ")[2];
-                RestaurantEntity entity = new RestaurantEntity(item.getTitle(),
+                Restaurants entity = new Restaurants(item.getTitle(),
                 province, city, district, item.getTelephone(), item.getMapx(), item.getMapy(),
                         item.getDescription(), 0);
                 restsList.add(entity);
@@ -55,19 +54,19 @@ public class RestaurantService {
         }
     }
 
-    public ResultDTO insertRestaurant(List<RestaurantEntity> restaurantEntities) {
+    public ResultDTO insertRestaurant(List<Restaurants> restaurantEntities) {
         try {
-            for (RestaurantEntity restaurantEntity : restaurantEntities) {
+            for (Restaurants restaurants : restaurantEntities) {
                 String sql = "insert into restaurants(name, province, city, district, telephone, mapx, mapy, description, rate) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbcTemplate.update(sql, restaurantEntity.getName(),
-                        restaurantEntity.getProvince(),
-                        restaurantEntity.getCity(),
-                        restaurantEntity.getDistrict(),
-                        restaurantEntity.getTelephone(),
-                        restaurantEntity.getMapx(),
-                        restaurantEntity.getMapy(),
-                        restaurantEntity.getDescription(),
-                        restaurantEntity.getRate());
+                jdbcTemplate.update(sql, restaurants.getName(),
+                        restaurants.getProvince(),
+                        restaurants.getCity(),
+                        restaurants.getDistrict(),
+                        restaurants.getTelephone(),
+                        restaurants.getMapx(),
+                        restaurants.getMapy(),
+                        restaurants.getDescription(),
+                        restaurants.getRate());
             }
             return new ResultDTO(true, "Insert Successfully");
         } catch(Exception e) {
@@ -101,22 +100,23 @@ public class RestaurantService {
         // block()을 사용하면 동기적으로 응답을 받을 수도 있음
         String result = pubMono.block();
         log.info(result);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = objectMapper.readTree(result);
-            JsonNode resultsNode = rootNode.get("results");
-            List<RestaurantEntity> restaurants = dtoToEntity(result);
-            ResultDTO resultDTO = insertRestaurant(restaurants);
-            return resultDTO;
-        } catch(Exception e) {
-            return new ResultDTO(false, e.getMessage());
-        }
+        return null;
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            JsonNode rootNode = objectMapper.readTree(result);
+//            JsonNode resultsNode = rootNode.get("results");
+//            List<RestaurantEntity> restaurants = dtoToEntity(result);
+//            ResultDTO resultDTO = insertRestaurant(restaurants);
+//            return resultDTO;
+//        } catch(Exception e) {
+//            return new ResultDTO(false, e.getMessage());
+//        }
     }
 
-    public List<RestaurantEntity> getAllRestaurants() {
+    public List<Restaurants> getAllRestaurants() {
         try {
             String sql = "select * from restaurants";
-            List<RestaurantEntity> restaurants = jdbcTemplate.query(sql,
+            List<Restaurants> restaurants = jdbcTemplate.query(sql,
                     (rs, rowNum) -> {
                         String resName = rs.getString("name");
                         String resProvince = rs.getString("province");
@@ -127,7 +127,7 @@ public class RestaurantService {
                         long resMapy = rs.getLong("mapy");
                         String resDescription = rs.getString("description");
                         int resRate = rs.getInt("rate");
-                        return new RestaurantEntity(resName, resProvince, resCity, resDistrict, resTelephone, resMapx, resMapy, resDescription, resRate);
+                        return new Restaurants(resName, resProvince, resCity, resDistrict, resTelephone, resMapx, resMapy, resDescription, resRate);
                     }
             );
             return restaurants;

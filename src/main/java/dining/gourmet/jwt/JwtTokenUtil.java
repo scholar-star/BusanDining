@@ -1,5 +1,7 @@
 package dining.gourmet.jwt;
+import dining.gourmet.auth.UserType;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,21 +16,17 @@ import java.util.function.Function;
 public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String secretKey;
+    private Key key;
 
-    private static String staticSecretKey;
-
-    @PostConstruct
-    public void init() {
-        staticSecretKey = secretKey;
+    public JwtTokenUtil() {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public static String createToken(String loginId, long exp) {
-        Claims claims = Jwts.claims();
-        claims.put("loginId", loginId);
-        Key key = Keys.hmacShaKeyFor(staticSecretKey.getBytes());
-
+    public String createToken(String loginId, String nickName, UserType role, long exp) {
         return Jwts.builder()
-                .setClaims(claims)
+                .claim("loginId", loginId)
+                .claim("nickName", nickName)
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis())) // 발행
                 .setExpiration(new Date(System.currentTimeMillis()+(exp*1000*60))) // 만료
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -52,18 +50,22 @@ public class JwtTokenUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimdistract) {
-        final Claims claims = extractAllClaims(token);
-        return claimdistract.apply(claims);
+    public String getLoginID(String token) {
+        return extractAllClaims(token).get("loginId", String.class);
     }
 
-    public String extractUser(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String getNickName(String token) {
+        return extractAllClaims(token).get("nickName", String.class);
+    }
+
+    public UserType getRole(String token) {
+        return extractAllClaims(token).get("role", UserType.class);
     }
 }
